@@ -23,12 +23,11 @@ namespace Domain.Aggregate
         protected CollectorProfile() { }
 
         public CollectorProfile(
-            Guid collectorProfileID,
             Guid userId,
             string contactInfo, 
             bool isActive = true)
         {
-            CollectorProfileID = collectorProfileID;
+            CollectorProfileID = new Guid();
             UserID = userId;
             ContactInfo = contactInfo;
             IsActive = isActive;

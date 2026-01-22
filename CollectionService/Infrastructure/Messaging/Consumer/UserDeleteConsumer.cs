@@ -30,5 +30,7 @@ namespace Infrastructure.Messaging.Consumer
                     Level.Infrastructure, $"Failed when delete user data: {ex.Message}");
             }
         }
+
+        
     }
 }

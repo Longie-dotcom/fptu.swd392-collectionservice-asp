@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Security.Cryptography.X509Certificates;
+using Application.DTO;
+using AutoMapper;
+using Domain.Aggregate;
+using Domain.Entity;
 
 namespace Application.Helper
 {
@@ -8,6 +12,9 @@ namespace Application.Helper
         {
             #region Collector Profile
             // Aggregate
+            CreateMap<CollectionTask, CollectionTaskDTO>();
+            CreateMap<CollectorProfile, CollectorProfileDTO>();
+
             #endregion
         }
     }

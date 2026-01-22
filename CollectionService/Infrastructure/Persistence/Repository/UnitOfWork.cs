@@ -84,7 +84,7 @@ namespace Infrastructure.Persistence.Repository
             }
         }
 
-        private async Task RollbackAsync()
+        public async Task RollbackAsync()
         {
             if (transaction != null)
             {

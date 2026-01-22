@@ -11,11 +11,12 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Google.Protobuf" Version="3.33.0" />
     <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
     <PackageReference Include="SignalREnvelope" Version="1.0.3" />
     <PackageReference Include="SWD392.Authorization" Version="1.0.0" />
     <PackageReference Include="SWD392.Contract" Version="1.0.4" />
-    <PackageReference Include="SWD392.MessageBroker" Version="1.0.0" />
+    <PackageReference Include="SWD392.MessageBroker" Version="1.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 

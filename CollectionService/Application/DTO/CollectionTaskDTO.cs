@@ -9,16 +9,15 @@ namespace Application.DTO
 {
     public class CollectionTaskDTO
     {
-        public Guid CollectionTaskID { get; private set; }
-        public Guid CollectionReportID { get; private set; }
-        public string Note { get; private set; }
-        public string ImageName { get; private set; }
-        public double AmountEstimated { get; private set; }
-        public CollectionReportStatus Status { get; private set; }
-        public DateTime AssignedAt { get; private set; }
-        public DateTime StartedAt { get; private set; }
-        public DateTime CompletedAt { get; private set; }
-
-        public Guid CollectorProfileID { get; private set; }
+        public Guid CollectionTaskID { get; set; }
+        public Guid CollectionReportID { get; set; }
+        public string Note { get; set; }
+        public string ImageName { get; set; }
+        public double AmountEstimated { get; set; }
+        public CollectionReportStatus Status { get; set; }
+        public DateTime AssignedAt { get; set; }
+        public DateTime StartedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public Guid CollectorProfileID { get; set; }
     }
 }

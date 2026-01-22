@@ -5,6 +5,6 @@ namespace Domain.IRepository
         IGenericRepository<CollectorProfile>,
         IRepositoryBase
     {
-
+        IQueryable<CollectorProfile> GetAllCollectorProfiles();
     }
 }

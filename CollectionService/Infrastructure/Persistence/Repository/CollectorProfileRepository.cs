@@ -18,6 +18,11 @@ namespace Infrastructure.Persistence.Repository
         public CollectorProfileRepository(CollectionDBContext context) : base(context) { }
 
         #region Methods
+        public IQueryable<CollectorProfile> GetAllCollectorProfiles()
+        {
+            return context.CollectorProfiles
+                          .Include(cp => cp.CollectionTasks).AsNoTracking();
+        }
         #endregion
     }
 }

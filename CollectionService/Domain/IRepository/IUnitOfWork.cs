@@ -6,6 +6,7 @@
 
         Task BeginTransactionAsync();
         Task<int> CommitAsync(string? performedBy = null);
+        Task RollbackAsync();
     }
 
     public interface IRepositoryBase
