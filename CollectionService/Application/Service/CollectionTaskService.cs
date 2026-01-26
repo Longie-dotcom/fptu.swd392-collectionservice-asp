@@ -37,13 +37,39 @@ namespace Application.Service
         {
             await unitOfWork.BeginTransactionAsync();
 
-            var collectionTask = await unitOfWork.GetRepository<ICollectionTaskRepository>().GetByIdAsync(collectionTaskId);
-            if(collectionTask == null) 
-                return (false, "Collection Task not found");
-            if(collectionTask.CompletedAt.HasValue)
-                return (false, "Collection Task is already deactivated.");
+            try
+            {
+                var collectionTask = await unitOfWork.GetRepository<ICollectionTaskRepository>().GetByIdAsync(collectionTaskId);
+                if (collectionTask == null)
+                {
+                    await unitOfWork.RollbackAsync();
+                    return (false, "Collection Task not found");
+                }
+                if (collectionTask.CompletedAt.HasValue)
+                {
+                    await unitOfWork.RollbackAsync();
+                    return (false, "Collection Task đã hoàn thành.");
+                }
 
-            return collectionTask.CheckDeleted();
+                var (canDelete, errorMessage) = collectionTask.CheckDeleted();
+                if (!canDelete)
+                {
+                    await unitOfWork.RollbackAsync();
+                    return (false, errorMessage);
+                }
+
+                // Commit TRƯỚC khi return thành công
+                unitOfWork.GetRepository<ICollectionTaskRepository>().Remove(collectionTaskId);
+                await unitOfWork.CommitAsync(deleteBy);
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                await unitOfWork.RollbackAsync();
+                throw; // Ném lại exception để controller xử lý
+            }
+
+
         }
 
         public async Task<GenericResult<IEnumerable<CollectionTaskDTO>>> GetAllCollectionTask(string sortBy, QueryCollectionTaskDTO dto)
