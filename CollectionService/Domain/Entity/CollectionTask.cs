@@ -18,7 +18,7 @@ namespace Domain.Entity
         public CollectionReportStatus Status { get; private set; }
         public DateTime AssignedAt { get; private set; }
         public DateTime StartedAt { get; private set; }
-        public DateTime? CompletedAt { get; private set; }
+        public DateTime? CompletedAt { get; private set; }      //////////
 
         public Guid CollectorProfileID { get; private set; }
         #endregion
@@ -85,7 +85,7 @@ namespace Domain.Entity
 
         public void UpdateDetails(string? note, string? imageName, double? amountEstimated, Guid? collectorProfileId)
         {
-            if(StartedAt != default(DateTime) || CompletedAt.HasValue) 
+            if(StartedAt != default(DateTime) || CompletedAt.HasValue)
                 throw new InvalidOperationException("Cannot update task that has started or completed.");
             if(!string.IsNullOrWhiteSpace(note)) 
                 Note = note;
