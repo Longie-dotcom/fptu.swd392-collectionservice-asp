@@ -79,6 +79,8 @@ namespace Infrastructure
                 {
                     // Add all consumers for this service
                     x.AddConsumer<UserDeleteConsumer>();
+                    x.AddConsumer<CreateCollectionTaskConsumer>();
+                    x.AddConsumer<CreateCollectorProfileConsumer>();
 
                     x.UsingRabbitMq((context, cfg) =>
                     {
@@ -105,6 +107,16 @@ namespace Infrastructure
                         cfg.ReceiveEndpoint("collection_delete_consumer", e =>
                         {
                             e.ConfigureConsumer<UserDeleteConsumer>(context);
+                        });
+
+                        cfg.ReceiveEndpoint("collection_task_create_consumer", e =>
+                        {
+                            e.ConfigureConsumer<CreateCollectionTaskConsumer>(context);
+                        });
+
+                        cfg.ReceiveEndpoint("collector_profile_create_consumer", e =>
+                        {
+                            e.ConfigureConsumer<CreateCollectorProfileConsumer>(context);
                         });
                     });
                 });

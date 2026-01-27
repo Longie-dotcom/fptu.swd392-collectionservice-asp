@@ -5,24 +5,24 @@ using SWD392.MessageBroker;
 
 namespace Infrastructure.Messaging.Consumer
 {
-    public class CreateCollectorProfileConsumer : IConsumer<CollectorProfileDTO>
+    public class CreateCollectionTaskConsumer : IConsumer<CollectionTaskCreateDTO>
     {
         private readonly ICollectionService collectorProfileService;
 
-        public CreateCollectorProfileConsumer(
+        public CreateCollectionTaskConsumer(
             ICollectionService collectorProfileService)
         {
             this.collectorProfileService = collectorProfileService;
         }
 
-        public async Task Consume(ConsumeContext<CollectorProfileDTO> context)
+        public async Task Consume(ConsumeContext<CollectionTaskCreateDTO> context)
         {
             try
             {
                 var message = context.Message;
                 ServiceLogger.Logging(
-                    Level.Infrastructure, $"Create collector profile data: {message.UserID}");
-                await collectorProfileService.CreateCollectorProfileAsync(message);
+                    Level.Infrastructure, $"Create collection task with report ID: {message.CollectionReportID} for assignee: {message.CollectorProfileID}");
+                await collectorProfileService.CreateCollectionTaskAsync(message);
             }
             catch (Exception ex)
             {

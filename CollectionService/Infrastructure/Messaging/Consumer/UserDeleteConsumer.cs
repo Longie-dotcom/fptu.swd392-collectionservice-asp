@@ -7,10 +7,10 @@ namespace Infrastructure.Messaging.Consumer
 {
     public class UserDeleteConsumer : IConsumer<UserDeleteDTO>
     {
-        private readonly ICollectorService collectorService;
+        private readonly ICollectionService collectorService;
 
         public UserDeleteConsumer(
-            ICollectorService collectorService)
+            ICollectionService collectorService)
         {
             this.collectorService = collectorService;
         }
@@ -30,7 +30,5 @@ namespace Infrastructure.Messaging.Consumer
                     Level.Infrastructure, $"Failed when delete user data: {ex.Message}");
             }
         }
-
-        
     }
 }

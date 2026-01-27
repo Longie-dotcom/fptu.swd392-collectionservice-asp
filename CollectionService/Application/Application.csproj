@@ -16,7 +16,7 @@
     <PackageReference Include="SignalREnvelope" Version="1.0.3" />
     <PackageReference Include="SWD392.Authorization" Version="1.0.0" />
     <PackageReference Include="SWD392.Contract" Version="1.0.4" />
-    <PackageReference Include="SWD392.MessageBroker" Version="1.0.3" />
+    <PackageReference Include="SWD392.MessageBroker" Version="1.0.4" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 

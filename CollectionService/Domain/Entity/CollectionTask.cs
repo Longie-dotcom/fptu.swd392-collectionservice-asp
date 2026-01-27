@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Domain.Abstraction;
+﻿using Domain.Abstraction;
 using Domain.Enum;
 
 namespace Domain.Entity

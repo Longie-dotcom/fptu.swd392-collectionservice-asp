@@ -19,9 +19,7 @@ namespace Application
         {
             services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
 
-            services.AddScoped<ICollectorService, CollectorService>();
-            services.AddScoped<ICollectionTaskService, CollectionTaskService>();
-            services.AddScoped<ICollectorProfileService, CollectorProfileService>();
+            services.AddScoped<ICollectionService, CollectionService>();
 
             return services;
         }
