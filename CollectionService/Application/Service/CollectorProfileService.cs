@@ -32,9 +32,24 @@ namespace Application.Service
                                 .GetAllCollectorProfiles()
                 .AnyAsync(x => x.ContactInfo.ToLower() == request.ContactInfo.ToLower() && x.IsActive);
 
-            var collectorProfile = new CollectorProfile(request.UserID, request.ContactInfo, request.IsActive);
+            if (duplicatedExists)
+            {
+                throw new InvalidOperationException($"CollectorProfile with ContactInfo '{request.ContactInfo}' already exists and is active.");
+            }
+
             await unitOfWork.BeginTransactionAsync();
-            unitOfWork.GetRepository<ICollectorProfileRepository>().Add(collectorProfile);
+            try
+            {
+                var collectorProfile = new CollectorProfile(request.UserID, request.ContactInfo, request.IsActive);
+                unitOfWork.GetRepository<ICollectorProfileRepository>().Add(collectorProfile);
+                await unitOfWork.CommitAsync("System");
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            
         }
 
         public async Task<GenericResult<Application.DTO.CollectorProfileDTO>> CreateCollectorProfileAsync(string createdBy, CollectorProfileCreateDTO dto)

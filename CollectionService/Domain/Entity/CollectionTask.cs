@@ -18,7 +18,7 @@ namespace Domain.Entity
         public CollectionReportStatus Status { get; private set; }
         public DateTime AssignedAt { get; private set; }
         public DateTime StartedAt { get; private set; }
-        public DateTime? CompletedAt { get; private set; }      //////////
+        public DateTime? CompletedAt { get; private set; }
 
         public Guid CollectorProfileID { get; private set; }
         #endregion
