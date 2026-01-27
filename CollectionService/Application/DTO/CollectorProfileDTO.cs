@@ -44,10 +44,11 @@ namespace Application.DTO
 
     public class QueryCollectorTaskDTO
     {
+        public string? SortBy { get; set; } = "AssignedAt";
         public int PageIndex { get; set; } = 1;
         public int PageLength { get; set; } = 10;
-        public DateTime AssignedAt { get; set; }
-        public DateTime StartAt { get; set; }
-        public CollectionReportStatus Status { get; set; }
+        public DateTime? AssignedAt { get; set; }
+        public DateTime? StartAt { get; set; }
+        public CollectionReportStatus? Status { get; set; } = CollectionReportStatus.Pending;
     }
 }

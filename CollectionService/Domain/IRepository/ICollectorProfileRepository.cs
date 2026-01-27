@@ -30,5 +30,7 @@ namespace Domain.IRepository
 
         Task<CollectorProfile?> GetCollectorProfileByUserId(
             Guid userId);
+
+        
     }
 }

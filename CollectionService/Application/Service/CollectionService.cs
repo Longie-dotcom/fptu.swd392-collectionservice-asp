@@ -3,6 +3,7 @@ using Application.DTO;
 using Application.Interface.IService;
 using AutoMapper;
 using Domain.Aggregate;
+using Domain.Entity;
 using Domain.IRepository;
 
 namespace Application.Service
@@ -59,17 +60,43 @@ namespace Application.Service
         }
 
 
-        public Task<IEnumerable<CollectionTaskDTO>> GetCollectionTasks(
+        public async Task<IEnumerable<CollectionTaskDTO>> GetCollectionTasks(
             Guid callerId, 
             QueryCollectorTaskDTO dto)
         {
-            throw new NotImplementedException();
+            var listCollectionTask = await unitOfWork.
+                GetRepository<ICollectionTaskRepository>()
+                .GetCollectionTasksByCollectorIdAsync(
+                callerId,
+                dto.SortBy,
+                dto.PageIndex,
+                dto.PageLength,
+                dto.AssignedAt,
+                dto.StartAt,
+                dto.Status);
+
+            if(listCollectionTask == null || !listCollectionTask.Any())
+                throw new CollectionTaskNotFound(
+                    $"Collection task list is not found or empty for collector profile ID: {callerId}");
+
+            return mapper.Map<IEnumerable<CollectionTaskDTO>>(listCollectionTask);
         }
 
-        public Task CreateCollectionTaskAsync(
+        public async Task CreateCollectionTaskAsync(
             SWD392.MessageBroker.CollectionTaskCreateDTO dto)
         {
-            throw new NotImplementedException();
+            await unitOfWork.BeginTransactionAsync();
+            var collectionTask = new CollectionTask(
+                Guid.NewGuid(),
+                dto.CollectionReportID,
+                dto.CollectorProfileID,
+                string.Empty,
+                string.Empty,
+                0);
+
+            unitOfWork.GetRepository<ICollectionTaskRepository>()
+                .Add(collectionTask);
+            await unitOfWork.CommitAsync("System");
         }
 
         public async Task CreateCollectorProfileAsync(
