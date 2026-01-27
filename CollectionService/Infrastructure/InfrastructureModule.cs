@@ -53,6 +53,7 @@ namespace Infrastructure
                 // Register repositories + Unit of Work
                 services.AddScoped<IAuditLogRepository, AuditLogRepository>();
                 services.AddScoped<ICollectorProfileRepository, CollectorProfileRepository>();
+                services.AddScoped<ICollectionTaskRepository, CollectionTaskRepository>();
 
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
