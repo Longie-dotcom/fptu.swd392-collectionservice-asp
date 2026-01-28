@@ -1,6 +1,4 @@
 ﻿using Domain.Aggregate;
-using Domain.Entity;
-using Domain.Enum;
 
 namespace Domain.IRepository
 {
@@ -17,20 +15,10 @@ namespace Domain.IRepository
         Task<CollectorProfile?> GetCollectorProfileDetailById(
             Guid collectorProfileId);
 
-        Task<IEnumerable<CollectionTask>> GetCollectionTasksByUserId(
-            Guid userId,
-            int pageIndex,
-            int pageLength,
-            CollectionReportStatus? status,
-            DateTime? assignedAt,
-            DateTime? startAt);
-
         Task<CollectorProfile?> GetCollectorProfileByContactInfo(
             string contactInfo);
 
         Task<CollectorProfile?> GetCollectorProfileByUserId(
             Guid userId);
-
-        
     }
 }

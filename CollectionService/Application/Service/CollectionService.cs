@@ -64,10 +64,20 @@ namespace Application.Service
             Guid callerId, 
             QueryCollectorTaskDTO dto)
         {
-            var listCollectionTask = await unitOfWork.
-                GetRepository<ICollectionTaskRepository>()
+            // Validate collector profile existence
+            var profile = await unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .GetCollectorProfileByUserId(callerId);
+
+            if (profile == null)
+                throw new CollectorProfileNotFound(
+                    $"Collector profile with user ID: {callerId} is not found");
+
+            // Validate task list existence
+            var list = await unitOfWork
+                .GetRepository<ICollectionTaskRepository>()
                 .GetCollectionTasksByCollectorIdAsync(
-                callerId,
+                profile.CollectorProfileID,
                 dto.SortBy,
                 dto.PageIndex,
                 dto.PageLength,
@@ -75,26 +85,38 @@ namespace Application.Service
                 dto.StartAt,
                 dto.Status);
 
-            if(listCollectionTask == null || !listCollectionTask.Any())
+            if(list == null || !list.Any())
                 throw new CollectionTaskNotFound(
-                    $"Collection task list is not found or empty for collector profile ID: {callerId}");
+                    $"Collection task list is not found or empty for collector profile ID: {profile.CollectorProfileID}");
 
-            return mapper.Map<IEnumerable<CollectionTaskDTO>>(listCollectionTask);
+            return mapper.Map<IEnumerable<CollectionTaskDTO>>(list);
         }
 
         public async Task CreateCollectionTaskAsync(
             SWD392.MessageBroker.CollectionTaskCreateDTO dto)
         {
-            await unitOfWork.BeginTransactionAsync();
+            // Validate collector profile existence
+            var profile = await unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .GetCollectorProfileByUserId(dto.CollectorUserID);
+
+            if (profile == null)
+                throw new CollectorProfileNotFound(
+                    $"Collector profile with user ID: {dto.CollectorUserID} is not found");
+
+            // Apply domain
             var collectionTask = new CollectionTask(
                 Guid.NewGuid(),
                 dto.CollectionReportID,
-                dto.CollectorProfileID,
+                profile.CollectorProfileID,
                 string.Empty,
                 string.Empty,
                 0);
 
-            unitOfWork.GetRepository<ICollectionTaskRepository>()
+            // Apply persistence
+            await unitOfWork.BeginTransactionAsync();
+            unitOfWork
+                .GetRepository<ICollectionTaskRepository>()
                 .Add(collectionTask);
             await unitOfWork.CommitAsync("System");
         }

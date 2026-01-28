@@ -21,7 +21,7 @@ namespace Infrastructure.Messaging.Consumer
             {
                 var message = context.Message;
                 ServiceLogger.Logging(
-                    Level.Infrastructure, $"Create collection task with report ID: {message.CollectionReportID} for assignee: {message.CollectorProfileID}");
+                    Level.Infrastructure, $"Create collection task with report ID: {message.CollectionReportID} for assignee with user ID: {message.CollectorUserID}");
                 await collectorProfileService.CreateCollectionTaskAsync(message);
             }
             catch (Exception ex)

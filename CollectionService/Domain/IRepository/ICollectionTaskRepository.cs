@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Aggregate;
-using Domain.Entity;
+﻿using Domain.Entity;
 using Domain.Enum;
 
 namespace Domain.IRepository
@@ -20,6 +14,6 @@ namespace Domain.IRepository
             int pageLength,
             DateTime? assignedAt,
             DateTime? startAt,
-             CollectionReportStatus? status);
+            CollectionReportStatus? status);
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Domain.Aggregate;
-using Domain.Entity;
-using Domain.Enum;
 using Domain.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -74,17 +72,6 @@ namespace Infrastructure.Persistence.Repository
             return await context.CollectorProfiles
                 .Include(x => x.CollectionTasks)
                 .FirstOrDefaultAsync(x => x.UserID == userId);
-        }
-
-        public Task<IEnumerable<CollectionTask>> GetCollectionTasksByUserId(
-            Guid userId, 
-            int pageIndex, 
-            int pageLength, 
-            CollectionReportStatus? status, 
-            DateTime? assignedAt,
-            DateTime? startAt)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }

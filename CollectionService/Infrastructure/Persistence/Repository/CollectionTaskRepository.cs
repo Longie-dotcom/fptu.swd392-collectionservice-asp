@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entity;
+﻿using Domain.Entity;
 using Domain.Enum;
 using Domain.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +14,22 @@ namespace Infrastructure.Persistence.Repository
 
         #region Properties
         #endregion
-        public CollectionTaskRepository(CollectionDBContext context) : base(context)
-        {
-        }
+
+        public CollectionTaskRepository(CollectionDBContext context) : base(context) { }
 
         #region Methods
-        public async Task<IEnumerable<CollectionTask>> GetCollectionTasksByCollectorIdAsync(Guid collectorProfileId, string? sortBy, int PageIndex, int PageLength, DateTime? AssignedAt, DateTime? StartAt, CollectionReportStatus? Status)
+        public async Task<IEnumerable<CollectionTask>> GetCollectionTasksByCollectorIdAsync(
+            Guid collectorProfileId,
+            string? sortBy,
+            int PageIndex,
+            int PageLength,
+            DateTime? AssignedAt,
+            DateTime? StartAt,
+            CollectionReportStatus? Status)
         {
             IQueryable<CollectionTask> query = context.CollectionTasks
-                .Where(x => x.CollectorProfileID == collectorProfileId).AsNoTracking();
+                .Where(x => x.CollectorProfileID == collectorProfileId)
+                .AsNoTracking();
 
             // Filter: AssignedAt
             if (AssignedAt.HasValue)
@@ -61,9 +63,6 @@ namespace Infrastructure.Persistence.Repository
 
             return await query.ToListAsync();
         }
-
-            #endregion
-
-
-        }
+        #endregion
     }
+}
