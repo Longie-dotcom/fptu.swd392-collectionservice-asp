@@ -3,7 +3,6 @@ using Application.DTO;
 using Application.Interface.IService;
 using AutoMapper;
 using Domain.Aggregate;
-using Domain.Entity;
 using Domain.IRepository;
 
 namespace Application.Service
@@ -47,7 +46,7 @@ namespace Application.Service
         public async Task<CollectorProfileDetailDTO> GetCollectorProfileDetail(
             Guid collectorProfileId)
         {
-            // Validate collector profile existence
+            // Validate collector profile detail existence
             var collectorProfile = await unitOfWork
                 .GetRepository<ICollectorProfileRepository>()
                 .GetCollectorProfileDetailById(collectorProfileId);
@@ -60,9 +59,9 @@ namespace Application.Service
         }
 
 
-        public async Task<IEnumerable<CollectionTaskDTO>> GetCollectionTasks(
-            Guid callerId, 
-            QueryCollectorTaskDTO dto)
+        public async Task<IEnumerable<CollectionTaskDTO>> GetMyCollectionTasks(
+            Guid callerId,
+            QueryMyCollectionTaskDTO dto)
         {
             // Validate collector profile existence
             var profile = await unitOfWork
@@ -92,6 +91,34 @@ namespace Application.Service
             return mapper.Map<IEnumerable<CollectionTaskDTO>>(list);
         }
 
+        public async Task SubmitProof(
+            Guid callerId, 
+            SubmitProofDTO dto)
+        {
+            // Validate collector profile existence
+            var profile = await unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .GetCollectorProfileByUserId(callerId);
+
+            if (profile == null)
+                throw new CollectorProfileNotFound(
+                    $"Collector profile with user ID: {callerId} is not found");
+
+            // Apply domain 
+            profile.FinishTask(
+                dto.CollectionTaskID,
+                dto.ImageName,
+                dto.Note,
+                dto.AmountEstimated);
+
+            // Apply persistence
+            await unitOfWork.BeginTransactionAsync();
+            unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .Update(profile.CollectorProfileID, profile);
+            await unitOfWork.CommitAsync("System");
+        }
+
         public async Task CreateCollectionTaskAsync(
             SWD392.MessageBroker.CollectionTaskCreateDTO dto)
         {
@@ -105,13 +132,9 @@ namespace Application.Service
                     $"Collector profile with user ID: {dto.CollectorUserID} is not found");
 
             // Apply domain
-            var collectionTask = new CollectionTask(
+            var collectionTask = profile.AssignTask(
                 Guid.NewGuid(),
-                dto.CollectionReportID,
-                profile.CollectorProfileID,
-                string.Empty,
-                string.Empty,
-                0);
+                dto.CollectionReportID);
 
             // Apply persistence
             await unitOfWork.BeginTransactionAsync();

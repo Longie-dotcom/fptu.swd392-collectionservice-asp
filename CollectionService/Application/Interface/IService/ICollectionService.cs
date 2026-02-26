@@ -10,9 +10,13 @@ namespace Application.Interface.IService
         Task<CollectorProfileDetailDTO> GetCollectorProfileDetail(
             Guid collectorProfileId);
 
-        Task<IEnumerable<CollectionTaskDTO>> GetCollectionTasks(
+        Task<IEnumerable<CollectionTaskDTO>> GetMyCollectionTasks(
             Guid callerId,
-            QueryCollectorTaskDTO dto);
+            QueryMyCollectionTaskDTO dto);
+
+        Task SubmitProof(
+            Guid callerId,
+            SubmitProofDTO dto);
 
         Task CreateCollectionTaskAsync(
             SWD392.MessageBroker.CollectionTaskCreateDTO dto);

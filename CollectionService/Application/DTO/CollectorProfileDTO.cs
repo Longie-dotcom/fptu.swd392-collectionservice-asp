@@ -42,13 +42,21 @@ namespace Application.DTO
         public Guid CollectorProfileID { get; set; }
     }
 
-    public class QueryCollectorTaskDTO
+    public class QueryMyCollectionTaskDTO
     {
-        public string? SortBy { get; set; } = "AssignedAt";
+        public string? SortBy { get; set; } = string.Empty;
         public int PageIndex { get; set; } = 1;
         public int PageLength { get; set; } = 10;
         public DateTime? AssignedAt { get; set; }
         public DateTime? StartAt { get; set; }
         public CollectionReportStatus? Status { get; set; } = CollectionReportStatus.Pending;
+    }
+
+    public class SubmitProofDTO
+    {
+        public Guid CollectionTaskID { get; set; }
+        public string ImageName { get; set; } = string.Empty;
+        public double AmountEstimated { get; set; }
+        public string? Note { get; set; }
     }
 }

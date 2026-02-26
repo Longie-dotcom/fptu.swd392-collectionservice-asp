@@ -13,6 +13,7 @@ namespace Infrastructure.Persistence
         // Aggregate Roots
         // ====================
         public DbSet<CollectorProfile> CollectorProfiles => Set<CollectorProfile>();
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
         // ====================
         // Internal Entities
@@ -78,6 +79,29 @@ namespace Infrastructure.Persistence
 
                 entity.Property(ct => ct.CollectorProfileID)
                       .IsRequired();
+            });
+
+            // ====================
+            // AuditLog
+            // ====================
+            modelBuilder.Entity<AuditLog>(entity =>
+            {
+                entity.HasKey(al => al.AuditLogId);
+
+                entity.Property(al => al.EntityName)
+                      .IsRequired()
+                      .HasMaxLength(250);
+
+                entity.Property(al => al.Action)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(al => al.Timestamp)
+                      .IsRequired();
+
+                // Using nvarchar(max) or equivalent for JSON/Value storage
+                entity.Property(al => al.OldValue);
+                entity.Property(al => al.NewValue);
             });
         }
     }

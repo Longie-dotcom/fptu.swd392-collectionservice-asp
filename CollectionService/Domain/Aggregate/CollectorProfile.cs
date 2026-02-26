@@ -1,4 +1,5 @@
-﻿using Domain.Entity;
+﻿using Domain.DomainException;
+using Domain.Entity;
 
 namespace Domain.Aggregate
 {
@@ -37,6 +38,36 @@ namespace Domain.Aggregate
         public void Deactivate()
         {
             IsActive = false;
+        }
+
+        public CollectionTask AssignTask(
+            Guid collectionTaskId,
+            Guid collectionReportId)
+        {
+            var collectionTask = new CollectionTask(
+                collectionTaskId,
+                collectionReportId,
+                CollectorProfileID);
+
+            collectionTasks.Add(collectionTask);
+
+            return collectionTask;
+        }
+
+        public void FinishTask(
+            Guid collectionTaskId,
+            string imageName,
+            string? note,
+            double amountEstimated)
+        {
+            var task = collectionTasks.FirstOrDefault(
+                ct => ct.CollectionTaskID == collectionTaskId);
+
+            if (task == null)
+                throw new CollectorProfileAggregateException(
+                    $"Collection task with ID: {collectionTaskId} is not found");
+
+            task.Complete(note, amountEstimated, imageName);
         }
         #endregion
     }
