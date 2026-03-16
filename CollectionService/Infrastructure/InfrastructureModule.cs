@@ -6,6 +6,7 @@ using Infrastructure.Grpc;
 using Infrastructure.InfrastructureException;
 using Infrastructure.MessageBroker.Publisher;
 using Infrastructure.Messaging.Consumer;
+using Infrastructure.Messaging.Publisher;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repository;
 using MassTransit;
@@ -124,6 +125,7 @@ namespace Infrastructure
 
                 services.AddScoped<IEmailSendPublisher, EmailSendPublisher>();
                 services.AddScoped<ISignalRPublisher, SignalRPublisher>();
+                services.AddScoped<ICollectionReportStatusUpdatePublisher, CollectionReportStatusUpdatePublisher>();
 
                 ServiceLogger.Logging(
                     Level.Infrastructure, "RabbitMQ successfully configured.");

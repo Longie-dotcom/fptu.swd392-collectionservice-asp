@@ -54,7 +54,7 @@ namespace Domain.Aggregate
             return collectionTask;
         }
 
-        public void FinishTask(
+        public CollectionTask FinishTask(
             Guid collectionTaskId,
             string imageName,
             string? note,
@@ -68,6 +68,8 @@ namespace Domain.Aggregate
                     $"Collection task with ID: {collectionTaskId} is not found");
 
             task.Complete(note, amountEstimated, imageName);
+
+            return task;
         }
         #endregion
     }

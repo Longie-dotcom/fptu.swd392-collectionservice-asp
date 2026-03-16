@@ -1,8 +1,10 @@
 ﻿using Application.ApplicationException;
 using Application.DTO;
+using Application.Interface.IPublisher;
 using Application.Interface.IService;
 using AutoMapper;
 using Domain.Aggregate;
+using Domain.Enum;
 using Domain.IRepository;
 
 namespace Application.Service
@@ -10,6 +12,7 @@ namespace Application.Service
     public class CollectionService : ICollectionService
     {
         #region Attributes
+        private readonly ICollectionReportStatusUpdatePublisher collectionReportStatusUpdatePublisher;
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         #endregion
@@ -17,8 +20,12 @@ namespace Application.Service
         #region Properties
         #endregion
 
-        public CollectionService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CollectionService(
+            ICollectionReportStatusUpdatePublisher collectionReportStatusUpdatePublisher,
+            IUnitOfWork unitOfWork, 
+            IMapper mapper)
         {
+            this.collectionReportStatusUpdatePublisher = collectionReportStatusUpdatePublisher;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
@@ -105,7 +112,7 @@ namespace Application.Service
                     $"Collector profile with user ID: {callerId} is not found");
 
             // Apply domain 
-            profile.FinishTask(
+            var task = profile.FinishTask(
                 dto.CollectionTaskID,
                 dto.ImageName,
                 dto.Note,
@@ -117,6 +124,14 @@ namespace Application.Service
                 .GetRepository<ICollectorProfileRepository>()
                 .Update(profile.CollectorProfileID, profile);
             await unitOfWork.CommitAsync("System");
+
+            // Publish to Citizen and Enterprise services
+            await collectionReportStatusUpdatePublisher.UpdateCollectionReportStatus(
+                new SWD392.MessageBroker.CollectionReportStatusUpdateDTO
+                {
+                    CollectionReportID = task.CollectionReportID,
+                    Status = CollectionReportStatus.Collected.ToString(),
+                });
         }
 
         public async Task CreateCollectionTaskAsync(
