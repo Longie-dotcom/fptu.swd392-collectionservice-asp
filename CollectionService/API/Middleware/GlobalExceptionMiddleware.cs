@@ -49,7 +49,7 @@ namespace API.Middleware
 
                 // Not Found Exceptions - 404 Not Found
                 case 
-                CollectorProfileNotFound:
+                CollectorProfileNotFound or CollectionTaskNotFound:
                     ServiceLogger.Warning(
                         Level.API, $"Resource not found: {exception.GetType().Name}, detail: {exception.Message}");
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
