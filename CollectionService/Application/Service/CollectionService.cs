@@ -66,73 +66,73 @@ namespace Application.Service
         }
 
 
-        public async Task<IEnumerable<CollectionTaskDTO>> GetMyCollectionTasks(
-            Guid callerId,
-            QueryMyCollectionTaskDTO dto)
-        {
-            // Validate collector profile existence
-            var profile = await unitOfWork
-                .GetRepository<ICollectorProfileRepository>()
-                .GetCollectorProfileByUserId(callerId);
+        //public async Task<IEnumerable<CollectionTaskDTO>> GetMyCollectionTasks(
+        //    Guid callerId,
+        //    QueryMyCollectionTaskDTO dto)
+        //{
+        //    // Validate collector profile existence
+        //    var profile = await unitOfWork
+        //        .GetRepository<ICollectorProfileRepository>()
+        //        .GetCollectorProfileByUserId(callerId);
 
-            if (profile == null)
-                throw new CollectorProfileNotFound(
-                    $"Collector profile with user ID: {callerId} is not found");
+        //    if (profile == null)
+        //        throw new CollectorProfileNotFound(
+        //            $"Collector profile with user ID: {callerId} is not found");
 
-            // Validate task list existence
-            var list = await unitOfWork
-                .GetRepository<ICollectionTaskRepository>()
-                .GetCollectionTasksByCollectorIdAsync(
-                profile.CollectorProfileID,
-                dto.SortBy,
-                dto.PageIndex,
-                dto.PageLength,
-                dto.AssignedAt,
-                dto.StartAt,
-                dto.Status);
+        //    // Validate task list existence
+        //    var list = await unitOfWork
+        //        .GetRepository<ICollectionTaskRepository>()
+        //        .GetCollectionTasksByCollectorIdAsync(
+        //        profile.CollectorProfileID,
+        //        dto.SortBy,
+        //        dto.PageIndex,
+        //        dto.PageLength,
+        //        dto.AssignedAt,
+        //        dto.StartAt,
+        //        dto.Status);
 
-            if(list == null || !list.Any())
-                throw new CollectionTaskNotFound(
-                    $"Collection task list is not found or empty for collector profile ID: {profile.CollectorProfileID}");
+        //    if(list == null || !list.Any())
+        //        throw new CollectionTaskNotFound(
+        //            $"Collection task list is not found or empty for collector profile ID: {profile.CollectorProfileID}");
 
-            return mapper.Map<IEnumerable<CollectionTaskDTO>>(list);
-        }
+        //    return mapper.Map<IEnumerable<CollectionTaskDTO>>(list);
+        //}
 
-        public async Task SubmitProof(
-            Guid callerId, 
-            SubmitProofDTO dto)
-        {
-            // Validate collector profile existence
-            var profile = await unitOfWork
-                .GetRepository<ICollectorProfileRepository>()
-                .GetCollectorProfileByUserId(callerId);
+        //public async Task SubmitProof(
+        //    Guid callerId, 
+        //    SubmitProofDTO dto)
+        //{
+        //    // Validate collector profile existence
+        //    var profile = await unitOfWork
+        //        .GetRepository<ICollectorProfileRepository>()
+        //        .GetCollectorProfileByUserId(callerId);
 
-            if (profile == null)
-                throw new CollectorProfileNotFound(
-                    $"Collector profile with user ID: {callerId} is not found");
+        //    if (profile == null)
+        //        throw new CollectorProfileNotFound(
+        //            $"Collector profile with user ID: {callerId} is not found");
 
-            // Apply domain 
-            var task = profile.FinishTask(
-                dto.CollectionTaskID,
-                dto.ImageName,
-                dto.Note,
-                dto.AmountEstimated);
+        //    // Apply domain 
+        //    var task = profile.FinishTask(
+        //        dto.CollectionTaskID,
+        //        dto.ImageName,
+        //        dto.Note,
+        //        dto.AmountEstimated);
 
-            // Apply persistence
-            await unitOfWork.BeginTransactionAsync();
-            unitOfWork
-                .GetRepository<ICollectorProfileRepository>()
-                .Update(profile.CollectorProfileID, profile);
-            await unitOfWork.CommitAsync("System");
+        //    // Apply persistence
+        //    await unitOfWork.BeginTransactionAsync();
+        //    unitOfWork
+        //        .GetRepository<ICollectorProfileRepository>()
+        //        .Update(profile.CollectorProfileID, profile);
+        //    await unitOfWork.CommitAsync("System");
 
-            // Publish to Citizen and Enterprise services
-            await collectionReportStatusUpdatePublisher.UpdateCollectionReportStatus(
-                new SWD392.MessageBroker.CollectionReportStatusUpdateDTO
-                {
-                    CollectionReportID = task.CollectionReportID,
-                    Status = CollectionReportStatus.Collected.ToString(),
-                });
-        }
+        //    // Publish to Citizen and Enterprise services
+        //    await collectionReportStatusUpdatePublisher.UpdateCollectionReportStatus(
+        //        new SWD392.MessageBroker.CollectionReportStatusUpdateDTO
+        //        {
+        //            CollectionReportID = task.CollectionReportID,
+        //            Status = CollectionReportStatus.Collected.ToString(),
+        //        });
+        //}
 
         public async Task CreateCollectionTaskAsync(
             SWD392.MessageBroker.CollectionTaskCreateDTO dto)
@@ -206,6 +206,77 @@ namespace Application.Service
                 .GetRepository<ICollectorProfileRepository>()
                 .Update(profile.CollectorProfileID, profile);
             await unitOfWork.CommitAsync();
+        }
+
+        public async Task<CollectorProfileDetailDTO> SubmitProof(
+            Guid callerId,
+            SubmitProofDTO dto)
+        {
+            var profile = await unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .GetCollectorProfileByUserId(callerId);
+
+            if (profile == null)
+                throw new CollectorProfileNotFound(
+                    $"Collector profile with user ID: {callerId} is not found");
+
+            var task = profile.FinishTask(
+                dto.CollectionTaskID,
+                dto.ImageName,
+                dto.Note,
+                dto.AmountEstimated);
+
+            await unitOfWork.BeginTransactionAsync();
+            unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .Update(profile.CollectorProfileID, profile);
+            await unitOfWork.CommitAsync("System");
+
+            await collectionReportStatusUpdatePublisher.UpdateCollectionReportStatus(
+                new SWD392.MessageBroker.CollectionReportStatusUpdateDTO
+                {
+                    CollectionReportID = task.CollectionReportID,
+                    Status = CollectionReportStatus.Collected.ToString(),
+                });
+
+            return mapper.Map<CollectorProfileDetailDTO>(profile);
+        }
+
+        public async Task<CollectorProfileDetailDTO> GetMyCollectionTasks(
+            Guid callerId,
+            QueryMyCollectionTaskDTO dto)
+        {
+            var profile = await unitOfWork
+                .GetRepository<ICollectorProfileRepository>()
+                .GetCollectorProfileByUserId(callerId);
+
+            if (profile == null)
+                throw new CollectorProfileNotFound(
+                    $"Collector profile with user ID: {callerId} is not found");
+
+            var list = await unitOfWork
+                .GetRepository<ICollectionTaskRepository>()
+                .GetCollectionTasksByCollectorIdAsync(
+                    profile.CollectorProfileID,
+                    dto.SortBy,
+                    dto.PageIndex,
+                    dto.PageLength,
+                    dto.AssignedAt,
+                    dto.StartAt,
+                    dto.Status);
+
+            var profileDetailDto = mapper.Map<CollectorProfileDetailDTO>(profile);
+
+            if (list != null && list.Any())
+            {
+                profileDetailDto.CollectionTasks = mapper.Map<List<CollectionTaskDTO>>(list);
+            }
+            else
+            {
+                profileDetailDto.CollectionTasks = new List<CollectionTaskDTO>();
+            }
+
+            return profileDetailDto;
         }
         #endregion
     }

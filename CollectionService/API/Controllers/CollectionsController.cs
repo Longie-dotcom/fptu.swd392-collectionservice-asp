@@ -47,6 +47,8 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        // ============================================================
+
         [AuthorizePrivilege("ViewMyCollectionTask")]
         [HttpGet("my-collection-task")]
         public async Task<ActionResult<CollectorProfileDetailDTO>> GetMyCollectionTasks(
@@ -65,11 +67,12 @@ namespace API.Controllers
             [FromBody] SubmitProofDTO dto)
         {
             var claim = CheckClaimHelper.CheckClaim(User);
-            await collectionService.SubmitProof(
+            var result = await collectionService.SubmitProof(
                 claim.userId,
                 dto);
-            return Ok("Proof submitted successfully.");
+            return Ok(result);
         }
+        // ============================================================
         #endregion
     }
 }

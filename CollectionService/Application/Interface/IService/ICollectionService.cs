@@ -10,11 +10,11 @@ namespace Application.Interface.IService
         Task<CollectorProfileDetailDTO> GetCollectorProfileDetail(
             Guid collectorProfileId);
 
-        Task<IEnumerable<CollectionTaskDTO>> GetMyCollectionTasks(
+        Task<CollectorProfileDetailDTO> GetMyCollectionTasks(
             Guid callerId,
             QueryMyCollectionTaskDTO dto);
 
-        Task SubmitProof(
+        Task<CollectorProfileDetailDTO> SubmitProof(
             Guid callerId,
             SubmitProofDTO dto);
 
